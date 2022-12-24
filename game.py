@@ -1,93 +1,95 @@
-import tictacpy
+class TicTacToe:
 
-class Emojis:
-    def __init__(self, x, o, b):
-        self.x = x
-        self.o = o
-        self.b = b
+    # SYMBOLS FOR players
+    SYMBOLS = ["O", "X"]
 
-class TTT:
-    def __init__(self, xPlayer, oPlayer, x:str = "❌", o:str = "⭕", b:str = "ㅤ"):
-        if xPlayer == oPlayer:
-            raise tictacpy.CannotBeTheSame("The players for x and o cannot be the same!")
-        self.board = tictacpy.Board(x, o, b)
-        self.emojis = Emojis(x, o, b)
-        self.xPlayer = xPlayer
-        self.oPlayer = oPlayer
-        self.turnPlayer = xPlayer
-    
-    def turn(self, space:str, player:str):
-        if space.lower() not in ("a1", "b1", "c1", "a2", "b2", "c2", "a3", "b3", "c3"):
-            raise tictacpy.InvalidSquare(F"Square {space} is not on the board!")
-        else:
-            if player.lower() not in ("x", "o"):
-                raise tictacpy.InvalidPlayer("The player must be an \"x\" or an \"o\"")
-            elif player == "x":
-                turnplayer = self.xPlayer
-            elif player == "o":
-                turnplayer = self.oPlayer
-            
-            if turnplayer != self.turnPlayer:
-                raise tictacpy.NotTheirTurn("It is not that player's turn!")
-            
-            square = self.board.decode(space)
-            if square is None:
-                raise tictacpy.UnknownError("An unknown error has occured!")
+    # Private variables
+    __table = [
+        ["_", "_", "_"],
+        ["_", "_", "_"],
+        ["_", "_", "_"]
+    ]
+
+
+    def init(self):
+        pass
+
+    def __draw(self):
+        for i in range(3):
+            for j in range(3):
+                print(self.__table[i][j], end=" ")
+            print("")
+
+    def __register_turn(self, player):
+        print("Настала очередь игрока №", player + 1)
+
+        while True:
+            position_x = int(input("Строка: ")) - 1
+            position_y = int(input("Столбец: ")) - 1
+
+            if position_x > 2 or position_y > 2:
+                print("Введите строку и/или столбец, меньший или равный 3")
+                continue
+
+            if self.__table[position_x][position_y] == "_":
+                self.__table[position_x][position_y] = self.SYMBOLS[player]
+                break
             else:
-                if square != self.emojis.b:
-                    return False
-                else:
-                    if turnplayer == self.xPlayer:
-                        self.turnPlayer = self.oPlayer
-                    else:
-                        self.turnPlayer = self.xPlayer
-                    return self.board.change(space, player, self.emojis.x, self.emojis.o)
-    
-    def is_over(self):
-        if self.board.A1 == self.board.A2 and self.board.A2 == self.board.A3 and self.board.A1 == self.emojis.x:
-            return "X"
-        elif self.board.A1 == self.board.A2 and self.board.A2 == self.board.A3 and self.board.A1 == self.emojis.o:
-            return "O"
-        elif self.board.B1 == self.board.B2 and self.board.B2 == self.board.B3 and self.board.B1 == self.emojis.x:
-            return "X"
-        elif self.board.B1 == self.board.B2 and self.board.B2 == self.board.B3 and self.board.B1 == self.emojis.o:
-            return "O"
-        elif self.board.C1 == self.board.C2 and self.board.C2 == self.board.C3 and self.board.C1 == self.emojis.x:
-            return "X"
-        elif self.board.C1 == self.board.C2 and self.board.C2 == self.board.C3 and self.board.C1 == self.emojis.o:
-            return "O"
-        
-        elif self.board.A1 == self.board.B1 and self.board.B1 == self.board.C1 and self.board.A1 == self.emojis.x:
-            return "X"
-        elif self.board.A1 == self.board.B1 and self.board.B1 == self.board.C1 and self.board.A1 == self.emojis.o:
-            return "O"
-        elif self.board.A2 == self.board.B2 and self.board.B2 == self.board.C2 and self.board.A2 == self.emojis.x:
-            return "X"
-        elif self.board.A2 == self.board.B2 and self.board.B2 == self.board.C2 and self.board.A2 == self.emojis.o:
-            return "O"
-        elif self.board.A3 == self.board.B3 and self.board.B3 == self.board.C3 and self.board.A3 == self.emojis.x:
-            return "X"
-        elif self.board.A3 == self.board.B3 and self.board.B3 == self.board.C3 and self.board.A3 == self.emojis.o:
-            return "O"
-        
-        elif self.board.A1 == self.board.B2 and self.board.B2 == self.board.C3 and self.board.A1 == self.emojis.x:
-            return "X"
-        elif self.board.A1 == self.board.B2 and self.board.B2 == self.board.C3 and self.board.A1 == self.emojis.o:
-            return "O"
-        elif self.board.A3 == self.board.B2 and self.board.B2 == self.board.C1 and self.board.A3 == self.emojis.x:
-            return "X"
-        elif self.board.A3 == self.board.B2 and self.board.B2 == self.board.C1 and self.board.A3 == self.emojis.o:
-            return "O"
-        
-        elif self.board.A1 != self.emojis.b and self.board.A2 != self.emojis.b and self.board.A3 != self.emojis.b and self.board.B1 != self.emojis.b and self.board.B2 != self.emojis.b and self.board.B3 != self.emojis.b and self.board.C1 != self.emojis.b and self.board.C2 != self.emojis.b and self.board.C3 != self.emojis.b:
-            return None
-        
+                print("Эта позиция уже имеет значение")
+
+    # Check if there are matches in the vector and then it returns
+    # True if there is match
+    def __does_match(self, array):
+        horizontal_result = set(array)
+
+        if len(horizontal_result) == 1 and not '_' in horizontal_result:
+            return True
+
+        return False
+
+    def __get_winner(self):
+
+        diagonal_1 = []
+        diagonal_2 = []
+
+        for i in range(3):
+            # Horizontal
+            if self.__does_match(self.__table[i]):
+                return True
+            else:
+                diagonal_1.append(self.__table[i][i])
+                diagonal_2.append(self.__table[i][2 - i])
+
+
+        # Diagonals
+        if self.__does_match(diagonal_1):
+            return True
+       
+        if self.__does_match(diagonal_2):
+            return True
+
+        vertical_matrix = list(zip(*self.__table))
+
+        for i in range(3):
+            # Vertical
+            if self.__does_match(vertical_matrix[i]):
+                return True
+
+        return False
+
+    def play(self):
+
+        for intent in range(9):
+            # getting the turn for the player
+            turn = intent % 2
+            self.__register_turn(turn)
+
+            # Print the table
+            self.__draw()
+
+            if self.__get_winner():
+                print(f"Победителем становится игрок {turn + 1}")
+                break
+
         else:
-            return False
-    
-    def visualize(self):
-        return "\n".join([
-            F"{self.board.A1}|{self.board.A2}|{self.board.A3}",
-            F"{self.board.B1}|{self.board.B2}|{self.board.B3}",
-            F"{self.board.C1}|{self.board.C2}|{self.board.C3}"
-        ])
+            print("Ничья, победила дружба!")
